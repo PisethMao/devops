@@ -1,0 +1,571 @@
+# version: "3.8"
+services:
+  nginx-svc:
+    image: nginx:mainline-alpine3.23-slim
+    container_name: nginx-svc
+    ports:
+      - "8080:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+  proxy:
+    image: nginx:mainline-alpine3.23-slim
+    container_name: nginx-proxy
+    ports:
+      - "9090:80"
+    volumes:
+      - ./proxy.conf:/etc/nginx/conf.d:ro
+    restart: unless-stopped
+  proxy-multi:
+    image: nginx:mainline-alpine3.23-slim
+    container_name: nginx-proxy-multi
+    ports:
+      - "10080:80"
+    volumes: 
+      - ./multi-proxy.conf:/etc/nginx/conf.d:ro
+    restart: unless-stopped
+  port-test:
+    image: nginx:latest
+    container_name: nginx-port-test
+    ports:
+      - "8081:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+  post-remove:
+    image: nginx:latest
+    container_name: nginx-post-remove
+    ports:
+      - "8083:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-rollback:
+    image: nginx:latest
+    container_name: nginx-post-rollback
+    ports:
+      - "8085:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-failure:
+    image: nginx:latest
+    container_name: nginx-post-failure
+    ports:
+      - "8086:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-success:
+    image: nginx:latest
+    container_name: nginx-post-success
+    ports:
+      - "8087:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-complete:
+    image: nginx:latest
+    container_name: nginx-post-complete
+    ports:
+      - "8088:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-timeout:
+    image: nginx:latest
+    container_name: nginx-post-timeout
+    ports:
+      - "8089:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        monitor: 10s
+        max_failure_ratio: 0.3
+        order: start-first
+      restart_policy:
+        condition: on-failure
+  post-monitor:
+    image: nginx:latest
+    container_name: nginx-post-monitor
+    ports:
+      - "8090:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+        monitor: 15s
+      restart_policy:
+        condition: on-failure
+  post-order:
+    image: nginx:latest
+    container_name: nginx-post-order
+    ports:
+      - "8091:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first
+      restart_policy:
+        condition: on-failure
+  post-healthcheck:
+    image: nginx:latest
+    container_name: nginx-post-healthcheck
+    ports:
+      - "8095:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-final:
+    image: nginx:latest
+    container_name: nginx-post-final
+    ports:
+      - "8098:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-initial:
+    image: nginx:latest
+    container_name: nginx-post-initial
+    ports:
+      - "8099:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-simple:
+    image: nginx:latest
+    container_name: nginx-post-simple
+    ports:
+      - "8100:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-basic:
+    image: nginx:latest
+    container_name: nginx-post-basic
+    ports:
+      - "8101:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-web:
+    image: nginx:latest
+    container_name: nginx-post-web
+    ports:
+      - "8102:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-finalize:
+    image: nginx:latest
+    container_name: nginx-post-finalize
+    ports:
+      - "8103:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-cleanup:
+    image: nginx:latest
+    container_name: nginx-post-cleanup
+    ports:
+      - "8104:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-conclusion:
+    image: nginx:latest
+    container_name: nginx-post-conclusion
+    ports:
+      - "8105:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-web-final:
+    image: nginx:latest
+    container_name: nginx-post-web-final
+    ports:
+      - "8106:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-ultimate:
+    image: nginx:latest
+    container_name: nginx-post-ultimate
+    ports:
+      - "8107:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-web-ultimate:
+    image: nginx:latest
+    container_name: nginx-post-web-ultimate
+    ports:
+      - "8108:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-final-web:
+    image: nginx:latest
+    container_name: nginx-post-final-web
+    ports:
+      - "8109:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-web-cleanup:
+    image: nginx:latest
+    container_name: nginx-post-web-cleanup
+    ports:
+      - "8110:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-comprehensive:
+    image: nginx:latest
+    container_name: nginx-post-comprehensive
+    ports:
+      - "8111:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-web-comprehensive:
+    image: nginx:latest
+    container_name: nginx-post-web-comprehensive
+    ports:
+      - "8112:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-final-comprehensive:
+    image: nginx:latest
+    container_name: nginx-post-final-comprehensive
+    ports:
+      - "8113:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-web-final-comprehensive:
+    image: nginx:latest
+    container_name: nginx-post-web-final-comprehensive
+    ports:
+      - "8114:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-ultimate-comprehensive:
+    image: nginx:latest
+    container_name: nginx-post-ultimate-comprehensive
+    ports:
+      - "8115:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-web-ultimate-comprehensive:
+    image: nginx:latest
+    container_name: nginx-post-web-ultimate-comprehensive
+    ports:
+      - "8116:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-finalize-comprehensive:
+    image: nginx:latest
+    container_name: nginx-post-finalize-comprehensive
+    ports:
+      - "8117:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-cleanup-comprehensive:
+    image: nginx:latest
+    container_name: nginx-post-cleanup-comprehensive
+    ports:
+      - "8118:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-conclusion-comprehensive:
+    image: nginx:latest
+    container_name: nginx-post-conclusion-comprehensive
+    ports:
+      - "8119:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-web-finalize-comprehensive:
+    image: nginx:latest
+    container_name: nginx-post-web-finalize-comprehensive
+    ports:
+      - "8120:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-ultimate-final-comprehensive:
+    image: nginx:latest
+    container_name: nginx-post-ultimate-final-comprehensive
+    ports:
+      - "8121:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  post-web-ultimate-final-comprehensive:
+    image: nginx:latest
+    container_name: nginx-post-web-ultimate-final-comprehensive
+    ports:
+      - "8122:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  postgres:
+    image: postgres:15.15-alpine3.23
+    container_name: postgres-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+  web:
+    image: nginx:mainline-alpine3.23-slim
+    ports:
+      - "8082:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+volumes:
+  pgdata:
