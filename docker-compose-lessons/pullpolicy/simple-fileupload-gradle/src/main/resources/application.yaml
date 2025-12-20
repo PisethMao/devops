@@ -1,0 +1,9 @@
+spring:
+    application:
+        name: filestorageservice
+server:
+    port: 8282
+file:
+  upload-img-dir: filestorage/images/
+  upload-img-client: /images/**
+  upload-file-dir: filestorage/data/

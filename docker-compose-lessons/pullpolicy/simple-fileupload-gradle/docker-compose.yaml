@@ -1,0 +1,16 @@
+services: 
+  fileupload-srv:
+    image: pisethmao/spring-file-upload:v1.0.0
+    build: 
+     context: . 
+     dockerfile: dev.Dockerfile
+     args: 
+      - PORT=${APP_PORT:-8080}
+    # environment: 
+    pull_policy: always
+    volumes: 
+      - image-backup-vol:/app/filestorage/images
+    ports: 
+      - 8081:${APP_PORT:-8080}
+volumes: 
+  image-backup-vol:
