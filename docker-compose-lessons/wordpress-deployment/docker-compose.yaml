@@ -1,0 +1,36 @@
+services:
+  wordpress:
+    image: wordpress:php8.1-fpm-alpine
+    container_name: wordpress-srv
+    networks:
+      - wordpress_network
+    ports:
+      - "8000:80"
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: exampleuser
+      WORDPRESS_DB_PASSWORD: examplepass
+      WORDPRESS_DB_NAME: exampledb
+    volumes:
+      - wordpress-data:/var/www/html
+  mysql:
+    container_name: mysql-srv
+    image: mysql:8.0.44-debian
+    networks:
+      - wordpress_network
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: exampleuser
+      MYSQL_PASSWORD: examplepass
+      MYSQL_ROOT_PASSWORD: somerootpassword
+    volumes:
+      - db-data:/var/lib/mysql
+volumes:
+  wordpress-data:
+  db-data:
+networks:
+  wordpress_network:
+  default:
+    driver: bridge

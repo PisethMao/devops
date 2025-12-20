@@ -6,6 +6,8 @@ services:
       - 3000:80
   react_app:
     image: nopcommerceteam/nopcommerce:4.90.3
+    restart: always
+    pull_policy: build
     container_name: my_react_app
     ports:
       - 8080:80
