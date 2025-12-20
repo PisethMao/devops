@@ -1,6 +1,6 @@
 services:
   wordpress:
-    image: wordpress:php8.1-fpm-alpine
+    image: wordpress:php8.1-apache
     container_name: wordpress-srv
     networks:
       - wordpress_network
