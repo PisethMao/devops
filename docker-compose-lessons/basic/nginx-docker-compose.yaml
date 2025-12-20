@@ -1,0 +1,11 @@
+services:
+  nginx:
+    image: nginx:mainline-alpine3.23-slim
+    container_name: my_nginx
+    ports:
+      - 3000:80
+  react_app:
+    image: nopcommerceteam/nopcommerce:4.90.3
+    container_name: my_react_app
+    ports:
+      - 8080:80
