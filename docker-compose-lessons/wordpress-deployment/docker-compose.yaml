@@ -22,9 +22,9 @@ services:
       - 3306:3306
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_USER: ${MYSQL_USER:- exampleuser}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:- somerootpassword}
     volumes:
       - db-data:/var/lib/mysql
 volumes:
