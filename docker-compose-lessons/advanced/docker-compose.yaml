@@ -1,0 +1,44 @@
+services:
+  nginx-svc-1:
+    image: nginx:mainline-alpine3.23
+    # container_name: nginx-svc-1
+    ports:
+      - "8083:80"
+    volumes:
+      - ./nginx/html:/usr/share/nginx/html:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    networks:
+      webnet:
+        ipv4_address: 10.10.0.10
+  nginx-svc-2:
+    image: nginx:mainline-alpine3.23
+    # container_name: nginx-svc-2
+    ports:
+      - "8084:80"
+    volumes:
+      - ./nginx/html:/usr/share/nginx/html:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    networks:
+      webnet:
+        ipv4_address: 10.10.0.20
+  nginx-svc-3:
+    image: nginx:mainline-alpine3.23
+    # container_name: nginx-svc-3
+    ports:
+      - 80
+    volumes:
+      - ./nginx/html:/usr/share/nginx/html:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    networks:
+      webnet:
+        ipv4_address: 10.10.0.30
+volumes:
+  nginx-html:
+    external: true
+  nginx-conf:
+networks:
+  webnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.0.0/16
