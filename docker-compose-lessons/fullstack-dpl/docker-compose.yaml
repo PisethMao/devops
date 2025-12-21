@@ -6,17 +6,19 @@ services:
       context: sample-product-reactapp
       dockerfile: Dockerfile
     pull_policy: build
+    # environment:
+    #   - REACT_APP_API_URL=http://localhost:8080
     # volumes:
     #   - ./sample-product-reactapp:/app
     ports:
       - "3001:80"
     networks:
       - frontend
-    depends_on:
-      - backend-api
-  backend-api:
+    # depends_on:
+    #   - backend-api
+  spring-svc:
     image: spring-app:latest
-    container_name: spring_cont
+    container_name: spring_cont_1
     build:
       context: sample-restful-jpa
       dockerfile: dev.Dockerfile
@@ -28,11 +30,11 @@ services:
     # volumes:
     #   - image-backup-vol:/app/filestorage/images
     ports:
-      - 8082:${APP_PORT:-8080}
+      - 8080:${APP_PORT:-8080}
     networks:
       - frontend
-    depends_on:
-      - postgres
+    # depends_on:
+    #   - postgres
   postgres:
     image: postgres:latest
     container_name: postgres_cont
