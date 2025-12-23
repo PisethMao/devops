@@ -1,0 +1,43 @@
+services:
+  job-service-db:
+    image: mongo:7.0
+    container_name: job-service-db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - job-service-vol:/data/db
+    networks:
+      - job-service-net
+
+  job-service:
+    image: benz3528/job-service
+    container_name: job-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - job-service-db
+    environment:
+      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
+    networks:
+      - job-service-net
+
+  next-jobfinder:
+    image: benz3528/next-jobfinder
+    container_name: next-jobfinder
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - job-service
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    networks:
+      - job-service-net
+
+volumes:
+  job-service-vol:
+
+networks:
+  job-service-net:
+    driver: bridge
