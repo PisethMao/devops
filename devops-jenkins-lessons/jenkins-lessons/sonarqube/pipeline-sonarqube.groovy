@@ -35,15 +35,12 @@ pipeline {
                 script {
                     def qg = waitForQualityGate()
                     if (qg.status != 'OK') {
-                        sh '''
-                            echo "No need to build since your QG is failed!"
-                        '''
                         currentBuild.result = 'FAILURE'
+                        echo "Quality gate failed: ${qg.status}. Stopping pipeline"
                         return
-                    } else {
-                        echo "Quality of code is ok!"
-                        currentBuild.result = 'SUCCESS'
                     }
+                    echo "Quality gate passed!"
+                    currentBuild.result == 'SUCCESS'
                 }
             }
         }
@@ -51,7 +48,7 @@ pipeline {
         stage('Build') {
             when {
                 expression {
-                    currentBuild.result = 'SUCCESS'
+                    currentBuild.result == 'SUCCESS'
                 }
             }
             steps {
@@ -62,7 +59,7 @@ pipeline {
         stage('Push') {
             when {
                 expression {
-                    currentBuild.result = 'SUCCESS'
+                    currentBuild.result == 'SUCCESS'
                 }
             }
             steps {
