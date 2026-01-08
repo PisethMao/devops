@@ -1,21 +1,30 @@
+def sendTelegramMessage(String message) { 
+    withEnv(["TG_MESSAGE=${message}"]) { 
+        sh '''#!/bin/bash -e 
+            curl -s -X POST "https://api.telegram.org/bot$TOKEN/sendMessage" -d "chat_id=$CHAT_ID" --data-urlencode "text=$TG_MESSAGE" > /dev/null
+        ''' 
+    } 
+}
+
 pipeline {
     agent any
 
     stages {
-        stage('Telegram Message') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'TELEGRAM_BOTS', passwordVariable: 'TOKEN', usernameVariable: 'CHAT_ID')]) {
-                        // some block
-                        sh """
-                            curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
-                            -d "chat_id=${CHAT_ID}" \
-                            --data-urlencode "text=Hello from Jenkins!"
-                        """
-                    }
-                }
-            }
-        }
+        // stage('Telegram Message') {
+        //     steps {
+        //         withCredentials([usernamePassword(credentialsId: 'TELEGRAM_BOTS', passwordVariable: 'TOKEN', usernameVariable: 'CHAT_ID')]) {
+        //             // some block
+        //             script {
+        //                 sendTelegramMessage("Telegram Pipeline Function")
+        //             }
+        //             // sh """
+        //             //     curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+        //             //     -d "chat_id=${CHAT_ID}" \
+        //             //     --data-urlencode "text=Hello from Jenkins!"
+        //             // """
+        //         }
+        //     }
+        // }
 
         stage('Clone Reactjs Code') {
             steps {
@@ -47,15 +56,18 @@ pipeline {
 
         stage('Wait for Quality Gate') {
             steps {
-                script {
-                    def qg = waitForQualityGate()
-                    if (qg.status != 'OK') {
-                        currentBuild.result = 'FAILURE'
-                        echo "Quality gate failed: ${qg.status}. Stopping pipeline"
-                        return
-                    }
-                    echo "Quality gate passed!"
-                    currentBuild.result == 'SUCCESS'
+                // script {
+                //     def qg = waitForQualityGate()
+                //     if (qg.status != 'OK') {
+                //         currentBuild.result = 'FAILURE'
+                //         echo "Quality gate failed: ${qg.status}. Stopping pipeline"
+                //         return
+                //     }
+                //     echo "Quality gate passed!"
+                //     currentBuild.result = 'SUCCESS'
+                // }
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
@@ -79,6 +91,36 @@ pipeline {
             }
             steps {
                 echo 'Pushing the docker image to registry'
+            }
+        }
+    }
+
+    post {
+        success {
+            withCredentials([usernamePassword(credentialsId: 'TELEGRAM_BOTS', passwordVariable: 'TOKEN', usernameVariable: 'CHAT_ID')]) {
+                // some block
+                script {
+                    sendTelegramMessage("Deployment is Success!!!")
+                }
+                // sh """
+                //     curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+                //     -d "chat_id=${CHAT_ID}" \
+                //     --data-urlencode "text=Hello from Jenkins!"
+                // """
+            }
+        }
+
+        failure {
+            withCredentials([usernamePassword(credentialsId: 'TELEGRAM_BOTS', passwordVariable: 'TOKEN', usernameVariable: 'CHAT_ID')]) {
+                // some block
+                script {
+                    sendTelegramMessage("Deployment is Failed!!!")
+                }
+                // sh """
+                //     curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+                //     -d "chat_id=${CHAT_ID}" \
+                //     --data-urlencode "text=Hello from Jenkins!"
+                // """
             }
         }
     }
