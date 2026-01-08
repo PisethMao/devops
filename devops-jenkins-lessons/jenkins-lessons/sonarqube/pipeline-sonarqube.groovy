@@ -38,11 +38,11 @@ pipeline {
                         sh '''
                             echo "No need to build since your QG is failed!"
                         '''
-                        currentBuild.result = 'FAILURED'
+                        currentBuild.result = 'FAILURE'
                         return
                     } else {
                         echo "Quality of code is ok!"
-                        currentBuild.result = 'FAILURED'
+                        currentBuild.result = 'SUCCESS'
                     }
                 }
             }
@@ -51,7 +51,7 @@ pipeline {
         stage('Build') {
             when {
                 expression {
-                    currentBuild.result = 'FAILURED'
+                    currentBuild.result = 'SUCCESS'
                 }
             }
             steps {
@@ -62,7 +62,7 @@ pipeline {
         stage('Push') {
             when {
                 expression {
-                    currentBuild.result = 'FAILURED'
+                    currentBuild.result = 'SUCCESS'
                 }
             }
             steps {
