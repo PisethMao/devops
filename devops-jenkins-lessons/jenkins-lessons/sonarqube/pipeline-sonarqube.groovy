@@ -2,6 +2,20 @@ pipeline {
     agent any
 
     stages {
+        stage('Telegram Message') {
+            steps {
+                script {
+                    def token='telegram-token'
+                    def chatId='chat-id'
+                    sh """
+                        curl -s -X POST "https://api.telegram.org/bot${token}/sendMessage" \
+                        -d "chat_id=${chatId}" \
+                        --data-urlencode "text=Hello from Jenkins!"
+                    """
+                }
+            }
+        }
+
         stage('Clone Reactjs Code') {
             steps {
                 git 'https://github.com/PisethMao/reactjs-template-product'
