@@ -5,13 +5,14 @@ pipeline {
         stage('Telegram Message') {
             steps {
                 script {
-                    def token='telegram-token'
-                    def chatId='chat-id'
-                    sh """
-                        curl -s -X POST "https://api.telegram.org/bot${token}/sendMessage" \
-                        -d "chat_id=${chatId}" \
-                        --data-urlencode "text=Hello from Jenkins!"
-                    """
+                    withCredentials([usernamePassword(credentialsId: 'TELEGRAM_BOTS', passwordVariable: 'TOKEN', usernameVariable: 'CHAT_ID')]) {
+                        // some block
+                        sh """
+                            curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+                            -d "chat_id=${CHAT_ID}" \
+                            --data-urlencode "text=Hello from Jenkins!"
+                        """
+                    }
                 }
             }
         }
