@@ -73,22 +73,22 @@ pipeline {
         }
 
         stage('Build') {
-            when {
-                expression {
-                    currentBuild.result == 'SUCCESS'
-                }
-            }
+            // when {
+            //     expression {
+            //         currentBuild.result == 'SUCCESS'
+            //     }
+            // }
             steps {
                 echo 'Building the docker image'
             }
         }
 
         stage('Push') {
-            when {
-                expression {
-                    currentBuild.result == 'SUCCESS'
-                }
-            }
+            // when {
+            //     expression {
+            //         currentBuild.result == 'SUCCESS'
+            //     }
+            // }
             steps {
                 echo 'Pushing the docker image to registry'
             }
