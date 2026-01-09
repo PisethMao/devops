@@ -79,7 +79,9 @@ pipeline {
             //     }
             // }
             steps {
-                echo 'Building the docker image'
+                sh '''
+                    docker build -t pisethmao/jenkins-react-sonarqube-pipeline:$BUILD_NUMBER .
+                '''
             }
         }
 
@@ -90,7 +92,13 @@ pipeline {
             //     }
             // }
             steps {
-                echo 'Pushing the docker image to registry'
+                withCredentials([usernamePassword(credentialsId: 'DOCKERHUB', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                    // some block
+                    sh '''
+                        echo "$PASSWORD" | docker login -u "$USERNAME" --password-stdin
+                        docker push pisethmao/jenkins-react-sonarqube-pipeline:$BUILD_NUMBER
+                    '''
+                }
             }
         }
     }
@@ -98,30 +106,51 @@ pipeline {
     post {
         success {
             withCredentials([usernamePassword(credentialsId: 'TELEGRAM_BOTS', passwordVariable: 'TOKEN', usernameVariable: 'CHAT_ID')]) {
-                // some block
                 script {
-                    sendTelegramMessage("Deployment is Success!!!")
+                    // some block
+                    def successMessage = """
+                        Deployment is Success!!! ✅
+                        Access Service: https://sonarqube.piseth.dev/dashboard?id=reactjs-template-product
+                        Job Name: ${env.JOB_NAME}
+                        Build Number: ${env.BUILD_NUMBER}
+                    """
+                    script {
+                        sendTelegramMessage("${successMessage}")
+                    }
+                    // sh """
+                    //     curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+                    //     -d "chat_id=${CHAT_ID}" \
+                    //     --data-urlencode "text=Hello from Jenkins!"
+                    // """
                 }
-                // sh """
-                //     curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
-                //     -d "chat_id=${CHAT_ID}" \
-                //     --data-urlencode "text=Hello from Jenkins!"
-                // """
             }
         }
 
         failure {
             withCredentials([usernamePassword(credentialsId: 'TELEGRAM_BOTS', passwordVariable: 'TOKEN', usernameVariable: 'CHAT_ID')]) {
-                // some block
                 script {
-                    sendTelegramMessage("Deployment is Failed!!!")
+                    // some block
+                    def errorMessage = """
+                        Deployment is Failed!!! ❌
+                        Job Name: ${env.JOB_NAME}
+                        Build Number: ${env.BUILD_NUMBER}
+                    """
+                    script {
+                        sendTelegramMessage("${errorMessage}")
+                    }
+                    // sh """
+                    //     curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+                    //     -d "chat_id=${CHAT_ID}" \
+                    //     --data-urlencode "text=Hello from Jenkins!"
+                    // """
                 }
-                // sh """
-                //     curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
-                //     -d "chat_id=${CHAT_ID}" \
-                //     --data-urlencode "text=Hello from Jenkins!"
-                // """
             }
+        }
+
+        always {
+            echo "This function do about clean work space!!!"
+            echo "Clearing the workplace of ${env.JOB_NAME}"
+            cleanWs()
         }
     }
 }
